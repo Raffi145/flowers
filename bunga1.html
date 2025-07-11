@@ -37,7 +37,9 @@
         filter: blur(0.1vmin);
         background-image: radial-gradient(ellipse at top, transparent 0%, var(--dark-color)), radial-gradient(ellipse at bottom, var(--dark-color), rgba(145, 233, 255, 0.2)), repeating-linear-gradient(220deg, black 0px, black 19px, transparent 19px, transparent 22px), repeating-linear-gradient(189deg, black 0px, black 19px, transparent 19px, transparent 22px), repeating-linear-gradient(148deg, black 0px, black 19px, transparent 19px, transparent 22px), linear-gradient(90deg, #00fffa, #f0f0f0);
       }
-      
+      canvas {
+        display: block;
+      }
       .flowers {
         position: relative;
         transform: scale(0.7);
@@ -1293,15 +1295,61 @@
             </div>
           </div>
         </div>
+      <canvas id="flowerCanvas"></canvas>
+        <!-- 🎵 Audio Background -->
+        <audio id="backgroundMusic" autoplay loop>
+          <source src="sempurna.mp3" type="audio/mpeg" />
+          Browser kamu tidak mendukung audio.
+        </audio>
       </body>
       <script>
       // <script src="java.js">
-        
-        onload = () => {
-            const c = setTimeout(() => {
-              document.body.classList.remove("not-loaded");
-              clearTimeout(c);
-            }, 1000);
+         const canvas = document.getElementById("flowerCanvas");
+          const ctx = canvas.getContext("2d");
+      
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+      
+          function drawPetal(cx, cy, radius, angle, color) {
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(angle);
+      
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.bezierCurveTo(radius / 2, -radius / 2, radius, radius / 2, 0, radius);
+            ctx.bezierCurveTo(-radius, radius / 2, -radius / 2, -radius / 2, 0, 0);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.restore();
+          }
+      
+          function drawFlower(cx, cy, petalCount, radius, time) {
+            for (let i = 0; i < petalCount; i++) {
+              let angle = (i * Math.PI * 2) / petalCount + time * 0.002;
+              let hue = (i * 360 / petalCount + time * 0.05) % 360;
+              let color = `hsl(${hue}, 100%, 60%)`;
+              drawPetal(cx, cy, radius, angle, color);
+            }
+          }
+      
+          function animate(time) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let centerX = canvas.width / 2;
+            let centerY = canvas.height / 2;
+            drawFlower(centerX, centerY, 20, 150, time);
+            requestAnimationFrame(animate);
+          }
+      
+          animate(0);
+          window.addEventListener('click', () => {
+            document.getElementById('backgroundMusic').play();
+          });
+          onload = () => {
+              const c = setTimeout(() => {
+                document.body.classList.remove("not-loaded");
+                clearTimeout(c);
+              }, 1000);
           };
       </script>
 
