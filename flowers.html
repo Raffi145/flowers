@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bunga dengan HTML Canvas</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+    }
+    canvas {
+      display: block;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // Ukuran kanvas
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    function drawFlower(cx, cy, radius, petalCount) {
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      for (let i = 0; i < petalCount; i++) {
+        const angle = (i * Math.PI * 2) / petalCount;
+        ctx.rotate(angle);
+        drawPetal(radius);
+      }
+
+      ctx.restore();
+    }
+
+    function drawPetal(radius) {
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(radius / 2, -radius / 2, radius, radius / 2, 0, radius);
+      ctx.bezierCurveTo(-radius, radius / 2, -radius / 2, -radius / 2, 0, 0);
+      ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 60%)`;
+      ctx.fill();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawFlower(canvas.width / 2, canvas.height / 2, 100, 8);
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
